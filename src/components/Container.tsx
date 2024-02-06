@@ -1,4 +1,4 @@
-import React, { useContext, useState, useRef, useEffect } from "react";
+import React, { useContext, useState, useRef, useEffect, useCallback } from "react";
 import GlobalContext from "./../context/Global";
 import StoriesContext from "./../context/Stories";
 import ProgressContext from "./../context/Progress";
@@ -10,6 +10,7 @@ import {
 } from "./../interfaces";
 import useIsMounted from "./../util/use-is-mounted";
 import { usePreLoader } from "../util/usePreLoader";
+import { LongPressEventType, useLongPress } from "use-long-press";
 
 export default function () {
   const [currentId, setCurrentId] = useState<number>(0);
@@ -128,12 +129,12 @@ export default function () {
     });
   };
 
-  const debouncePause = (e: React.MouseEvent | React.TouchEvent) => {
-    e.preventDefault();
-    mousedownId.current = setTimeout(() => {
-      toggleState("pause");
-    }, 1000);
-  };
+  // const debouncePause = (e: React.MouseEvent | React.TouchEvent) => {
+  //   e.preventDefault();
+  //   mousedownId.current = setTimeout(() => {
+  //     toggleState("pause");
+  //   }, 200);
+  // };
 
   const mouseUp =
     (type: string) => (e: React.MouseEvent | React.TouchEvent) => {
@@ -149,6 +150,29 @@ export default function () {
   const getVideoDuration = (duration: number) => {
     setVideoDuration(duration * 1000);
   };
+
+  const callback = useCallback(event => {
+    toggleState("pause")
+  }, []);
+
+  const bind = useLongPress(callback, {
+    onFinish: event => {
+      toggleState("play");
+    },
+    onCancel: (event, { context }) => {
+      if (context == 'left') {
+        mouseUp("previous")
+      } else {
+        mouseUp("next")
+      }
+    },
+    filterEvents: event => true, // All events can potentially trigger long press (same as 'undefined')
+    threshold: 200, // In milliseconds
+    captureEvent: true, // Event won't get cleared after React finish processing it
+    cancelOnMovement: false, // Square side size (in pixels) inside which movement won't cancel long press
+    cancelOutsideElement: true, // Cancel long press when moved mouse / pointer outside element while pressing
+    detect: LongPressEventType.Pointer
+  });
 
   return (
     <div
@@ -180,17 +204,11 @@ export default function () {
         <div style={styles.overlay}>
           <div
             style={{ width: "50%", zIndex: 999 }}
-            onTouchStart={debouncePause}
-            onTouchEnd={mouseUp("previous")}
-            onMouseDown={debouncePause}
-            onMouseUp={mouseUp("previous")}
+            {...bind('left')}
           />
           <div
             style={{ width: "50%", zIndex: 999 }}
-            onTouchStart={debouncePause}
-            onTouchEnd={mouseUp("next")}
-            onMouseDown={debouncePause}
-            onMouseUp={mouseUp("next")}
+            {...bind('right')}
           />
         </div>
       )}

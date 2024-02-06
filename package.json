@@ -1,6 +1,6 @@
 {
   "name": "react-insta-stories-mod",
-  "version": "2.6.4",
+  "version": "2.6.5",
   "description": "A React component for Instagram like stories",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -64,5 +64,8 @@
   },
   "directories": {
     "example": "example"
+  },
+  "dependencies": {
+    "use-long-press": "^3.2.0"
   }
 }
