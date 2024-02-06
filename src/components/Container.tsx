@@ -136,16 +136,16 @@ export default function () {
   //   }, 200);
   // };
 
-  const mouseUp =
-    (type: string) => (e: React.MouseEvent | React.TouchEvent) => {
-      e.preventDefault();
-      mousedownId.current && clearTimeout(mousedownId.current);
-      if (pause) {
-        toggleState("play");
-      } else {
-        type === "next" ? next({ isSkippedByUser: true }) : previous();
-      }
-    };
+  // const mouseUp =
+  //   (type: string) => (e: React.MouseEvent | React.TouchEvent) => {
+  //     e.preventDefault();
+  //     mousedownId.current && clearTimeout(mousedownId.current);
+  //     if (pause) {
+  //       toggleState("play");
+  //     } else {
+  //       type === "next" ? next({ isSkippedByUser: true }) : previous();
+  //     }
+  //   };
 
   const getVideoDuration = (duration: number) => {
     setVideoDuration(duration * 1000);
@@ -161,9 +161,9 @@ export default function () {
     },
     onCancel: (event, { context }) => {
       if (context == 'left') {
-        mouseUp("previous")
+        previous()
       } else {
-        mouseUp("next")
+        next({ isSkippedByUser: true })
       }
     },
     filterEvents: event => true, // All events can potentially trigger long press (same as 'undefined')
@@ -171,7 +171,7 @@ export default function () {
     captureEvent: true, // Event won't get cleared after React finish processing it
     cancelOnMovement: false, // Square side size (in pixels) inside which movement won't cancel long press
     cancelOutsideElement: true, // Cancel long press when moved mouse / pointer outside element while pressing
-    detect: LongPressEventType.Pointer
+    detect: LongPressEventType.Touch
   });
 
   return (
