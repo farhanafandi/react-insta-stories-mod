@@ -19,7 +19,7 @@ export const renderer: Renderer = ({ story, action, isPaused, config }) => {
   return (
     <WithHeader {...{ story, globalHeader: config.header }}>
       <WithSeeMore {...{ story, action }}>
-        <div style={{ width: width, height: height }}>
+        <div style={{ width: width, height: height, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
           <img style={computedStyles} src={story.url} onLoad={imageLoaded} />
           {!loaded && (
             <div

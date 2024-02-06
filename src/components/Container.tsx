@@ -132,7 +132,7 @@ export default function () {
     e.preventDefault();
     mousedownId.current = setTimeout(() => {
       toggleState("pause");
-    }, 200);
+    }, 1000);
   };
 
   const mouseUp =
